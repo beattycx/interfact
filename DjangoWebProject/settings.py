@@ -133,7 +133,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'app',
     'bootstrap3',
-    'registration',
+    'registration_mod',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

@@ -7,7 +7,7 @@ from django.http import HttpRequest, HttpResponseRedirect
 from django.template import RequestContext
 from datetime import datetime
 from django.contrib.auth.decorators import login_required, user_passes_test
-from registration.backends.simple.views import RegistrationView
+from registration_mod.backends.simple.views import RegistrationView
 from forms import *
 
 class HomeRegistrationView(RegistrationView):
