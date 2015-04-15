@@ -10,7 +10,8 @@
 </head>
 <body>
     {% block body_block %}
-        <h1>Overwritten for Lab Mgmt</h1>
+        <h1>Dashboard:</h1>
+        <a href="{% url 'add_project' %}">Add a Project</a><br>
         <a href="{% url 'order' %}">Order a Sequencing Run</a>
     {% endblock %}
 </body>

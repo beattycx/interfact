@@ -9,10 +9,8 @@
 </head>
 <body>
     <h1>NARF Laboratory Information Management System</h1>
-    <a href="{% url 'registration_register' %}">Registration</a>
-    <a href="{% url 'auth_login' %}">Login</a>
-    <a href="{% url 'auth_logout' %}">Logout</a>
-    <a href="/interfact/labmgmt">Lab Management</a>
+    <a href="{% url 'techdesk' %}">Technician's Desk</a>
+    <a href="{% url 'labmgmt' %}">Laboratory Management</a>
 
     {% block body_block %}
     <h2>This Ought to be Overwritten</h2>

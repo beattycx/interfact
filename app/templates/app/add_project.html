@@ -10,11 +10,11 @@
 </head>
 <body>
     {% block body_block %}
-        <h1>Ordering a Sequencing Run</h1>
+        <h1>Add a Project to the Laboratory</h1>
         <form method="post" action="">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <input type="submit" value="Proceed to Data Entry" />
+                <input type="submit" value="Submit" />
                 </form>
     {% endblock %}
 </body>

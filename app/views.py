@@ -6,13 +6,10 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponseRedirect
 from django.template import RequestContext
 from datetime import datetime
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
-from registration_mod.backends.simple.views import RegistrationView
 from forms import *
-
-class HomeRegistrationView(RegistrationView):
-    def get_success_url(self, request, user):
-        return '/accounts/register/complete'
 
 def home(request):
     """Renders the home page."""
@@ -58,20 +55,55 @@ def about(request):
 def base(request):
     return render(request, 'app/base.html')
 
-@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/accounts/login')
+def register(request):
+    """Registration logic implemented here with access to request and cleaned data"""
+    REGISTERED=False
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = User.objects.create_user(username=str(cd['username']), email=str(cd['email']), password=str(cd['password1']))
+            if cd['role']=='1':
+                try:
+                    techgroup = Group.objects.get(name='Technician')
+                    user.groups.add(techgroup)
+                except Exception as e:
+                    techgroup = Group.objects.create(name='Technician')
+                    user.groups.add(techgroup)
+            if cd['role']=='2':
+                try:
+                    PIgroup = Group.objects.get(name='Principal Investigator')
+                    user.groups.add(PIgroup)
+                except Exception as e:
+                    PIgroup = Group.objects.create(name='Principal Investigator')
+                    user.groups.add(PIgroup)
+            user.save()
+            user = authenticate(username=request.POST['username'], password=request.POST['password1'])
+            login(request, user)
+            return HttpResponseRedirect('/')
+    else:
+        form = RegistrationForm()
+    return render(request, 'app/register.html', {'form': form})
+
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def labmgmt(request):
     return render(request, 'app/labmgmt.html')
 
-@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/accounts/login')
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def order(request):
     if request.method == 'POST':
-        form = OrderForm(request.POST)
-        return HttpResponseRedirect('/interfact/labmgmt/order/sample_details')
+        number_of_samples=int(request.POST.get('number_of_samples'))
+        form = OrderSequencingRun(request.POST, number_of_samples=number_of_samples)
+        if form.is_valid():
+            #TODO Instantiate all samples
+            s = Sample(name=form.cleaned_data['name'])
+            s.save()
+            return HttpResponseRedirect('/interfact/labmgmt/order/')
     else:
-        form = OrderForm()
+        form = OrderSequencingRun()
     return render(request, 'app/order.html', {'form': form})
 
-@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/accounts/login')
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def sample_details(request):
     if request.method == 'POST':
         form = SampleDetailsForm(None, request.POST)
@@ -80,3 +112,21 @@ def sample_details(request):
     else:
         form = SampleDetailsForm(96)
     return render(request, 'app/sample_details.html', {'form': form})
+
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
+def add_project(request):
+    if request.method == 'POST':
+        form = AddProjectForm(None, request.POST)
+        if form.is_valid:
+            return HttpResponseRedirect('/interfact/labmgmt/')
+    else:
+        form = AddProjectForm()
+    return render(request, 'app/add_project.html', {'form': form})
+
+@user_passes_test(lambda u: u.groups.filter(name='Technician'))
+def techdesk(request):
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+    return render(request, 'app/techdesk.html')
