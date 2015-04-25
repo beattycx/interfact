@@ -64,7 +64,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            user = User.objects.create_user(username=str(cd['username']), email=str(cd['email']), password=str(cd['password1'], last_login=datetime.now()))
+            user = User.objects.create_user(username=str(cd['username']), email=str(cd['email']), password=str(cd['password1']))
             if cd['role']=='1':
                 try:
                     techgroup = Group.objects.get(name='Technician')
