@@ -9,6 +9,8 @@ from datetime import datetime
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.forms.models import modelformset_factory
+from django.forms import ModelForm
 from forms import *
 
 def home(request):
@@ -93,25 +95,31 @@ def labmgmt(request):
 def order(request):
     if request.method == 'POST':
         number_of_samples=int(request.POST.get('number_of_samples'))
-        form = OrderSequencingRun(request.POST, number_of_samples=number_of_samples)
+        #Add this number of samples or sequencing run object to session?
+        request.session['number_of_samples'] = number_of_samples
+        form = OrderSequencingRun(request.POST)
         if form.is_valid():
-            #TODO Instantiate all samples
-            s = Sample(name=form.cleaned_data['name'])
-            s.save()
-            return HttpResponseRedirect('/interfact/labmgmt/order/')
+            cd = form.cleaned_data
+            sr = SequencingRun(name=cd['name'], description=cd['description'], comment=cd['comment'], number_of_samples=cd['number_of_samples'])
+            sr.save()
+            return HttpResponseRedirect('/interfact/labmgmt/order/sample_details/')
     else:
         form = OrderSequencingRun()
-    return render(request, 'app/order.html', {'form': form})
+    return render(request, 'app/order.html', {'form': form,})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def sample_details(request):
+    SampleFormSetFactory = modelformset_factory(Sample, form=ModelForm, fields=('sampleID', 'name', 'laboratory', 'organism'), extra=request.session['number_of_samples'])
     if request.method == 'POST':
-        form = SampleDetailsForm(None, request.POST)
-        if form.is_valid():
+        sampleformset=SampleFormSetFactory(request.POST)
+        if sampleformset.is_valid():
+            for sampleform in sampleformset:
+                cd = sampleform.cleaned_data
+                pass #TODO instantiate samples
             return HttpResponseRedirect('/interfact/labmgmt/')
     else:
-        form = SampleDetailsForm(96)
-    return render(request, 'app/sample_details.html', {'form': form})
+        sampleformset = SampleFormSetFactory()
+    return render(request, 'app/sample_details.html', {'sampleformset': sampleformset})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def add_project(request):

@@ -17,7 +17,7 @@ class PrincipalInvestigator(models.Model):
 
 class Laboratory(models.Model):
     """This models a Laboratory from which orders are received """
-    principal_investigator = models.OneToOneField(PrincipalInvestigator)
+    principal_investigator = models.ForeignKey(PrincipalInvestigator)
 
 class Project(models.Model):
     """This models a particular Project under which orders are organized """
@@ -62,16 +62,20 @@ class Sample(models.Model):
     enrichment_percentage = models.IntegerField(null=True, blank=True)
     organism = models.ForeignKey(Organism)
 
+class SampleStatus(models.Model):
+    _choices={'1': 'Received', '2': 'Sequencing', '3': 'Finished'}
+    status = models.CharField(max_length=30, null=True, blank=True)
+
 class SampleTracking(models.Model):
     """Mutable record tracks sample workflow    """
     sampleID = models.OneToOneField(Sample)
-    samplestatus = models.CharField(max_length=254, null=True, blank=True)
+    samplestatus = models.ForeignKey(SampleStatus)
     technician = models.ForeignKey(Technician)
     timestamp = models.DateTimeField('date created', default=datetime.now)
     comment = models.CharField(max_length=254, null=True, blank=True)
 
 class SequencingRun(models.Model):
-    """Container for a run of up to 96 samples"""
+    """Sequencing runs associated with machine - may contain multiple different orders' samples """
     name = models.CharField(max_length=254)
     description = models.CharField(max_length=254)
     comment = models.CharField(max_length=254, null=True, blank=True)
@@ -86,4 +90,5 @@ class SequencingRun(models.Model):
     qualitygraphpath = models.CharField(max_length=254, null=True, blank=True)
     lengthgraphpath = models.CharField(max_length=254, null=True, blank=True)
     outputrunfilepath = models.CharField(max_length=254, null=True, blank=True)
+
 

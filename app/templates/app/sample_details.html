@@ -13,7 +13,10 @@
         <h1>Enter the Run's Sample Information</h1>
         <form method="post" action="">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ sampleformset.management_form }}
+                {% for sampleform in sampleformset %}
+                    {{ sampleform }}<br>
+                {% endfor %}
                 <input type="submit" value="Proceed to Data Entry" />
                 </form>
     {% endblock %}

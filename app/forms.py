@@ -78,7 +78,7 @@ class OrderSequencingRun(forms.ModelForm):
                    'qualityfiltermetricspath', 'qualitygraphpath',
                    'lengthgraphpath', 'outputrunfilepath')
 
-    def __init__(self, *args, **kwargs):
+    def bobby(self, *args, **kwargs):
         try:
             number_of_samples = kwargs.pop('number_of_samples')
             forms.ModelForm.__init__(self, *args, **kwargs)
@@ -88,6 +88,11 @@ class OrderSequencingRun(forms.ModelForm):
             forms.ModelForm.__init__(self, *args, **kwargs)
     #sample_number = forms.CharField(max_length=96, widget=forms.NumberInput(), label="Number of Samples")
     #protocol = forms.ModelChoiceField(queryset=Protocol.objects.all())
+
+class SampleForm(forms.ModelForm):
+    class Meta:
+        model = Sample
+        fields = ()
 
 class SampleDetailsForm(forms.Form):
     def __init__(self, number_of_fields, *args, **kwargs):
