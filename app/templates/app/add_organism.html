@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% extends "app/base.html" %}
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    {% block body_block %}
+        {{ user.is_authenticated }}
+            <h1>Add a new organism to study:</h1>
+            {{ form.as_p }}
+    {% endblock %}
+</body>
+</html>

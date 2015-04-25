@@ -17,6 +17,7 @@ class PrincipalInvestigator(models.Model):
 
 class Laboratory(models.Model):
     """This models a Laboratory from which orders are received """
+    name = models.CharField(max_length=254)
     principal_investigator = models.ForeignKey(PrincipalInvestigator)
 
 class Project(models.Model):
@@ -61,6 +62,12 @@ class Sample(models.Model):
     bead_count = models.IntegerField(null=True, blank=True)
     enrichment_percentage = models.IntegerField(null=True, blank=True)
     organism = models.ForeignKey(Organism)
+
+class Order(models.Model):
+    name=models.CharField(max_length=254)
+    description=models.CharField(max_length=254)
+    number_of_samples=models.IntegerField()
+    samples=models.ManyToManyField(Sample)
 
 class SampleStatus(models.Model):
     _choices={'1': 'Received', '2': 'Sequencing', '3': 'Finished'}

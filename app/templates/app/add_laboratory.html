@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% extends "app/base.html" %}
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    {% block body_block %}
+        {% if user.is_authenticated %}
+            <h1>Add a new Laboratory:</h1>
+            {{ form.as_p }}
+        {% endif %}
+    {% endblock %}
+</body>
+</html>

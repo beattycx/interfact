@@ -69,6 +69,7 @@ def register(request):
                 try:
                     techgroup = Group.objects.get(name='Technician')
                     user.groups.add(techgroup)
+                    PI = PrincipalInvestigator(user_account=user, )
                 except Exception as e:
                     techgroup = Group.objects.create(name='Technician')
                     user.groups.add(techgroup)
@@ -97,14 +98,14 @@ def order(request):
         number_of_samples=int(request.POST.get('number_of_samples'))
         #Add this number of samples or sequencing run object to session?
         request.session['number_of_samples'] = number_of_samples
-        form = OrderSequencingRun(request.POST)
+        form = OrderForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            sr = SequencingRun(name=cd['name'], description=cd['description'], comment=cd['comment'], number_of_samples=cd['number_of_samples'])
-            sr.save()
+            o = Order(name=cd['name'], description=cd['description'], number_of_samples=cd['number_of_samples'])
+            o.save()
             return HttpResponseRedirect('/interfact/labmgmt/order/sample_details/')
     else:
-        form = OrderSequencingRun()
+        form = OrderForm()
     return render(request, 'app/order.html', {'form': form,})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
@@ -122,6 +123,19 @@ def sample_details(request):
     return render(request, 'app/sample_details.html', {'sampleformset': sampleformset})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
+def add_laboratory(request):
+    if request.method == 'POST':
+        form = LaboratoryForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            lab = Laboratory(name=cd['name'], principal_investigator=cd['principal_investigator'])
+            lab.save()
+            return HttpResponseRedirect('/interfact/labmgmt/')
+    else:
+        form = LaboratoryForm()
+    return render(request, 'app/add_laboratory.html', {'form': form})
+
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def add_project(request):
     if request.method == 'POST':
         form = AddProjectForm(None, request.POST)
@@ -131,10 +145,26 @@ def add_project(request):
         form = AddProjectForm()
     return render(request, 'app/add_project.html', {'form': form})
 
-@user_passes_test(lambda u: u.groups.filter(name='Technician'))
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
+def add_organism(request):
+    if request.method == 'POST':
+        pass
+    else:
+        form = OrganismForm()
+    return render(request, 'app/add_organism.html', {'form': form})
+
+@user_passes_test(lambda u: u.groups.filter(name='Technician'), login_url='/login')
 def techdesk(request):
     if request.method == 'POST':
         pass
     else:
         pass
     return render(request, 'app/techdesk.html')
+
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
+def list_orders(request):
+    return render(request, 'app/list_orders.html')
+
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
+def list_samples(request):
+    return render(request, 'app/list_samples.html')

@@ -11,8 +11,12 @@
 <body>
     {% block body_block %}
         <h1>Dashboard:</h1>
-        <a href="{% url 'add_project' %}">Add a Project</a><br>
-        <a href="{% url 'order' %}">Order a Sequencing Run</a>
+        <a href="{% url 'add_laboratory' %}">Add a Laboratory</a><br>
+        <a href="{% url 'add_organism' %}">Add an Organism</a><br>
+        <a href="{% url 'order' %}">Order a Sequencing Run</a><br>
+        <a href="{% url 'add_project' %}">Add Samples to a new Project</a><br>
+        <a href="{% url 'list_orders' %}">List Orders</a><br>
+        <a href="{% url 'list_samples' %}">List Samples</a><br>
     {% endblock %}
 </body>
 </html>

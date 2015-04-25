@@ -70,44 +70,26 @@ class BootstrapAuthenticationForm(AuthenticationForm):
                                    'class': 'form-control',
                                    'placeholder':'Password'}))
 
-class OrderSequencingRun(forms.ModelForm):
+class LaboratoryForm(forms.ModelForm):
     class Meta:
-        model = SequencingRun
-        exclude = ('technician', 'platesize', 'protocol', 'date',
-                   'samples', 'basecallermetricspath',
-                   'qualityfiltermetricspath', 'qualitygraphpath',
-                   'lengthgraphpath', 'outputrunfilepath')
+        model = Laboratory
+        exclude = ()
 
-    def bobby(self, *args, **kwargs):
-        try:
-            number_of_samples = kwargs.pop('number_of_samples')
-            forms.ModelForm.__init__(self, *args, **kwargs)
-            for i in range(number_of_samples):
-                self.fields['sample_%s' % i] = forms.CharField(label='sample name')
-        except KeyError:
-            forms.ModelForm.__init__(self, *args, **kwargs)
-    #sample_number = forms.CharField(max_length=96, widget=forms.NumberInput(), label="Number of Samples")
-    #protocol = forms.ModelChoiceField(queryset=Protocol.objects.all())
+class OrganismForm(forms.ModelForm):
+    class Meta:
+        model = Organism
+        exclude = ()
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        exclude = ('samples',)
 
 class SampleForm(forms.ModelForm):
     class Meta:
         model = Sample
         fields = ()
 
-class SampleDetailsForm(forms.Form):
-    def __init__(self, number_of_fields, *args, **kwargs):
-        forms.Form.__init__(self, *args, **kwargs)
-        if number_of_fields:
-            for i in range(0, number_of_fields):
-                self.fields["Sample %d" % i] = forms.CharField(max_length=254, widget=forms.TextInput())
-        else:
-            pass
-
 class AddProjectForm(forms.Form):
-    #def __init__(self, number_of_samples, *args, **kwargs):
-    #    forms.Form.__init__(self, *args, **kwargs)
-    #    if number_of_samples:
-    #        for i in range(0, number_of_samples):
-    #            self.fields["Sample %d" % i] = forms.ModelChoiceField(queryset=Sample.objects.all())
     project_name = forms.CharField(max_length=254, widget=forms.TextInput(), label="Name of the Project")
     samples = forms.ChoiceField(widget=forms.SelectMultiple, choices=Sample.objects.all())
