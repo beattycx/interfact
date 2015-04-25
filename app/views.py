@@ -132,14 +132,15 @@ def order(request):
 def sample_details(request):
     SampleFormSetFactory = modelformset_factory(Sample, form=ModelForm, fields=('sampleID', 'name', 'laboratory', 'organism'), extra=request.session['number_of_samples'])
     if request.method == 'POST':
-        sampleformset=SampleFormSetFactory(request.POST)
+        sampleformset=SampleFormSetFactory(request.POST, queryset=Sample.objects.none())
         if sampleformset.is_valid():
             for sampleform in sampleformset:
                 cd = sampleform.cleaned_data
-                pass #TODO instantiate samples
+                s = Sample(sampleID=cd['sampleID'], name=cd['name'], laboratory=cd['laboratory'], organism=cd['organism'])
+                s.save()
             return HttpResponseRedirect('/interfact/labmgmt/')
     else:
-        sampleformset = SampleFormSetFactory()
+        sampleformset = SampleFormSetFactory(queryset=Sample.objects.none())
     return render(request, 'app/sample_details.html', {'sampleformset': sampleformset})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
@@ -158,11 +159,18 @@ def add_laboratory(request):
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def add_project(request):
     if request.method == 'POST':
-        form = AddProjectForm(None, request.POST)
-        if form.is_valid:
+        form = ProjectForm(request.POST, request=request)
+        if form.is_valid():
+            cd = form.cleaned_data
+            p = Project(projectID=cd['projectID'], name=cd['name'], description=cd['description'],
+                        laboratory=cd['laboratory'])
+            p.save()
+            for sample in cd['samples']:
+                p.samples.add(sample)
+            # TODO instantiate Project
             return HttpResponseRedirect('/interfact/labmgmt/')
     else:
-        form = AddProjectForm()
+        form = ProjectForm(request=request)
     return render(request, 'app/add_project.html', {'form': form})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
@@ -193,3 +201,7 @@ def list_orders(request):
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_samples(request):
     return render(request, 'app/list_samples.html')
+
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
+def list_projects(request):
+    return render(request, 'app/list_projects.html')

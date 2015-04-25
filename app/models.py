@@ -23,12 +23,8 @@ class Laboratory(models.Model):
     name = models.CharField(max_length=254)
     principal_investigator = models.ForeignKey(PrincipalInvestigator)
 
-class Project(models.Model):
-    """This models a particular Project under which orders are organized """
-    projectID = models.CharField(max_length=254)
-    name = models.CharField(max_length=254)
-    description = models.TextField(null=True, blank=True)
-    laboratoryID = models.ForeignKey(Laboratory)
+    def __unicode__(self):
+        return str(self.name)
 
 class Technician(models.Model):
     technicianID = models.CharField(max_length=254)
@@ -52,6 +48,9 @@ class Organism(models.Model):
     linnaean = models.CharField(max_length=254)
     strain = models.CharField(max_length=254)
 
+    def __unicode__(self):
+        return str(self.linnaean)+' '+str(self.strain)
+
 class Sample(models.Model):
     """A single sample's information"""
     sampleID = models.CharField(max_length=254)
@@ -59,13 +58,23 @@ class Sample(models.Model):
     ordered = models.DateTimeField('date created', default=datetime.now)
     received = models.DateTimeField(null=True, blank=True)
     laboratory = models.ForeignKey(Laboratory)
-    projectIDs = models.ManyToManyField(Project, blank=True)
     protocolID = models.ForeignKey(Protocol, null=True, blank=True)
     region = models.IntegerField(null=True, blank=True)
     concentration_of_DNA = models.FloatField(null=True, blank=True)
     bead_count = models.IntegerField(null=True, blank=True)
     enrichment_percentage = models.IntegerField(null=True, blank=True)
     organism = models.ForeignKey(Organism)
+
+    def __unicode__(self):
+        return str(self.sampleID+'|'+str(self.name)+'|'+str(self.organism)+'|')
+
+class Project(models.Model):
+    """This models a particular Project under which orders are organized """
+    projectID = models.CharField(max_length=254)
+    name = models.CharField(max_length=254)
+    description = models.TextField(null=True, blank=True)
+    laboratory = models.ForeignKey(Laboratory)
+    samples = models.ManyToManyField(Sample, blank=True)
 
 class Order(models.Model):
     name=models.CharField(max_length=254)

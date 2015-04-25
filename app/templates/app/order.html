@@ -10,7 +10,7 @@
 </head>
 <body>
     {% block body_block %}
-        <h1>Ordering a Sequencing Run</h1>
+        <h1>Please provide a name and description for your order:</h1>
         <form method="post" action="">
                 {% csrf_token %}
                 {{ form.as_p }}

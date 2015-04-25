@@ -95,6 +95,13 @@ class SampleForm(forms.ModelForm):
         model = Sample
         fields = ()
 
-class AddProjectForm(forms.Form):
-    project_name = forms.CharField(max_length=254, widget=forms.TextInput(), label="Name of the Project")
-    samples = forms.ChoiceField(widget=forms.SelectMultiple, choices=Sample.objects.all())
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        exclude = ()
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        self.fields['laboratory'].queryset = Laboratory.objects.filter(principal_investigator=PrincipalInvestigator.objects.filter(user_account=self.request.user))
+        self.fields['samples'].queryset = Sample.objects.filter(laboratory=Laboratory.objects.filter(principal_investigator=PrincipalInvestigator.objects.filter(user_account=self.request.user)))
