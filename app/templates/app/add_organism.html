@@ -6,9 +6,14 @@
 </head>
 <body>
     {% block body_block %}
-        {{ user.is_authenticated }}
+        {% if user.is_authenticated %}
             <h1>Add a new organism to study:</h1>
-            {{ form.as_p }}
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Submit" />
+            </form>
+        {% endif %}
     {% endblock %}
 </body>
 </html>

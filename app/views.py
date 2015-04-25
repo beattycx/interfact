@@ -59,7 +59,6 @@ def base(request):
 
 def register(request):
     """Registration logic implemented here with access to request and cleaned data"""
-    REGISTERED=False
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -69,7 +68,6 @@ def register(request):
                 try:
                     techgroup = Group.objects.get(name='Technician')
                     user.groups.add(techgroup)
-                    PI = PrincipalInvestigator(user_account=user, )
                 except Exception as e:
                     techgroup = Group.objects.create(name='Technician')
                     user.groups.add(techgroup)
@@ -77,9 +75,17 @@ def register(request):
                 try:
                     PIgroup = Group.objects.get(name='Principal Investigator')
                     user.groups.add(PIgroup)
+                    user.save()
+                    user = authenticate(username=request.POST['username'], password=request.POST['password1'])
+                    login(request, user)
+                    return HttpResponseRedirect('/interfact/labmgmt/add_PI/')
                 except Exception as e:
                     PIgroup = Group.objects.create(name='Principal Investigator')
                     user.groups.add(PIgroup)
+                    user.save()
+                    user = authenticate(username=request.POST['username'], password=request.POST['password1'])
+                    login(request, user)
+                    return HttpResponseRedirect('/interfact/labmgmt/add_PI/')
             user.save()
             user = authenticate(username=request.POST['username'], password=request.POST['password1'])
             login(request, user)
@@ -87,6 +93,20 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, 'app/register.html', {'form': form})
+
+@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
+def add_PI(request):
+    if request.method == 'POST':
+        form = PrincipalInvestigatorForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            pi = PrincipalInvestigator(user_account=request.user, first_name=cd['first_name'], last_name=cd['last_name'],
+                                       phone=cd['phone'], institution=cd['institution'])
+            pi.save()
+            return HttpResponseRedirect('/interfact/labmgmt/')
+    else:
+        form = PrincipalInvestigatorForm()
+    return render(request, 'app/add_PI.html', {'form': form})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def labmgmt(request):
@@ -148,7 +168,12 @@ def add_project(request):
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def add_organism(request):
     if request.method == 'POST':
-        pass
+        form = OrganismForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            o = Organism(common=cd['common'], linnaean=cd['linnaean'], strain=cd['strain'])
+            o.save()
+            return HttpResponseRedirect('/interfact/labmgmt/')
     else:
         form = OrganismForm()
     return render(request, 'app/add_organism.html', {'form': form})

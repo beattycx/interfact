@@ -15,6 +15,9 @@ class PrincipalInvestigator(models.Model):
     phone = models.CharField(max_length=50)
     institution = models.CharField(max_length=254)
 
+    def __unicode__(self):
+        return str(self.user_account)
+
 class Laboratory(models.Model):
     """This models a Laboratory from which orders are received """
     name = models.CharField(max_length=254)
@@ -47,6 +50,7 @@ class Organism(models.Model):
     """Organism from which the sample(s) are obtained """
     common = models.CharField(max_length=254)
     linnaean = models.CharField(max_length=254)
+    strain = models.CharField(max_length=254)
 
 class Sample(models.Model):
     """A single sample's information"""

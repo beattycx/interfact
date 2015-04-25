@@ -85,6 +85,11 @@ class OrderForm(forms.ModelForm):
         model = Order
         exclude = ('samples',)
 
+class PrincipalInvestigatorForm(forms.ModelForm):
+    class Meta:
+        model = PrincipalInvestigator
+        exclude = ('user_account',)
+
 class SampleForm(forms.ModelForm):
     class Meta:
         model = Sample

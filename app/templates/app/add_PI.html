@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 {% extends "app/base.html" %}
 <html>
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
 <head>
     <title></title>
 </head>
 <body>
     {% block body_block %}
+        <h1>Record your NARF Account Information:</h1>
         {% if user.is_authenticated %}
-            <h1>Add a new Laboratory:</h1>
             <form method="post" action="">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Submit" />
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Submit" />
             </form>
         {% endif %}
     {% endblock %}
