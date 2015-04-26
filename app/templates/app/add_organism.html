@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% extends "app/base.html" %}
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    {% block body_block %}
+        {% if user.is_authenticated %}
+            <h1>Add a new organism to study:</h1>
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Submit" />
+            </form>
+        {% endif %}
+    {% endblock %}
+</body>
+</html>
