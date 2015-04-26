@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<head>
+    <title>NARF Laboratory Information Management System</title>
+</head>
+<body>
+    <h1>NARF Laboratory Information Management System</h1>
+    <a href="{% url 'techdesk' %}">Technician's Desk</a>
+    <a href="{% url 'labmgmt' %}">Laboratory Management</a>
+
+    {% block body_block %}
+    <h2>This Ought to be Overwritten</h2>
+    {% endblock %}
+</body>
+</html>
+

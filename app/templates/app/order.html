@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% extends "app/base.html" %}
+<html>
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<head>
+    <title></title>
+</head>
+<body>
+    {% block body_block %}
+        <h1>Please provide a name and description for your order:</h1>
+        <form method="post" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {{ sampleformset.management_form }}
+                {% for sampleform in sampleformset %}
+                    {{ sampleform }}<br>
+                {% endfor %}
+                <input type="submit" value="Proceed to Data Entry" />
+                </form>
+    {% endblock %}
+</body>
+</html>

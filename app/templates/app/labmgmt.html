@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends "app/base.html" %}
+<html>
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<head>
+    <title></title>
+</head>
+<body>
+    {% block body_block %}
+        <h1>Dashboard:</h1>
+        <a href="{% url 'add_laboratory' %}">1. Add a Laboratory</a><br>
+        <a href="{% url 'add_organism' %}">2. Add an Organism</a><br>
+        <a href="{% url 'order' %}">3. Order Sample Sequencing</a><br>
+        <a href="{% url 'add_project' %}">4. Add Samples to a new Project</a><br>
+        <a href="{% url 'list_orders' %}">List Orders</a><br>
+        <a href="{% url 'list_samples' %}">List Samples</a><br>
+        <a href="{% url 'list_projects' %}">List Projects</a>
+    {% endblock %}
+</body>
+</html>
