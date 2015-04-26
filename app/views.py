@@ -2,7 +2,7 @@
 Definition of views.
 """
 
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.http import HttpRequest, HttpResponseRedirect
 from django.template import RequestContext
 from datetime import datetime
@@ -210,6 +210,15 @@ def view_project(request):
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_orders(request):
     query_results = Order.objects.all()
+    b=Order.objects.get(pk=1)
+    bf=OrderForm(instance=b)
+    data=yield_to_template(form_instance=bf, model_object=b,
+                        exclude=('number_of_comments', 'number_of_likes'),
+                        append=('user',))
+
+    return render_to_response('my-template.html',
+                          RequestContext(request,
+                                         {'data':data,}))
     #TODO render list using formset with default vals and button to view associated object
     return render(request, 'app/list_orders.html', {'query_results': query_results})
 
