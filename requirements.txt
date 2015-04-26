@@ -1,4 +1,4 @@
 --find-links wheelhouse
-MySQL_python-1.2.5-cp27-none-win_amd64
+mysql-python
 django<2
 django-bootstrap3
