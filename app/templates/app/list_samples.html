@@ -6,12 +6,14 @@
 </head>
 <body>
     {% block body_block %}
+        {% if user.is_authenticated %}
         <p>
         {{ sampleformset.management_form }}
         {% for form in sampleformset %}
             <p>{{ form }}</p>
         {% endfor %}
         </p>
+        {% endif %}
     {% endblock %}
 </body>
 </html>

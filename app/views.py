@@ -215,7 +215,6 @@ def view_project(request):
     query_results = Project.objects.filter()
     return render(request, 'app/view_project.html', {'query_results': query_results})
 
-@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_orders(request):
     #TODO show orders with their samples ?via related_name?
     #TODO have each record link to detailed view
@@ -225,7 +224,6 @@ def list_orders(request):
     orderformset = OrderFormSetFactory()
     return render(request, 'app/list_orders.html', {'orderformset': orderformset})
 
-@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_samples(request):
     #TODO display only samples associated with current user
     #TODO have each record link to detailed view
@@ -235,7 +233,6 @@ def list_samples(request):
     sampleformset = SampleFormSetFactory()
     return render(request, 'app/list_samples.html', {'sampleformset': sampleformset})
 
-@user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_projects(request):
     #TODO handle issues with Form receiving request so current users projects will display
     #TODO have each record link to detailed view
@@ -244,3 +241,15 @@ def list_projects(request):
     ProjectFormSetFactory = modelformset_factory(Project, form=ProjectForm, exclude=(), max_num=num)
     projectformset = ProjectFormSetFactory()
     return render(request, 'app/list_projects.html', {'projectformset': projectformset})
+
+def receive_order(request):
+    return render(request, 'app/receive_order.html', {'': None})
+
+def add_pool(request):
+    return render(request, 'app/add_pool.html', {'': None})
+
+def update_status(request):
+    return render(request, 'app/update_status.html', {'': None})
+
+def list_pools(request):
+    return render(request, 'app/list_pools.html', {'': None})

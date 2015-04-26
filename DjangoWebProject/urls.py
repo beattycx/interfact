@@ -45,9 +45,13 @@ urlpatterns = patterns('',
     url(r'^interfact/labmgmt/list_orders/$', 'app.views.list_orders', name='list_orders'),
     url(r'^interfact/labmgmt/list_samples/$', 'app.views.list_samples', name='list_samples'),
     url(r'^interfact/labmgmt/list_projects/$', 'app.views.list_projects', name='list_projects'),
+    url(r'^interfact/labmgmt/list_pools/$', 'app.views.list_pools', name='list_pools'),
     url(r'^interfact/labmgmt/view_order/$', 'app.views.view_order', name='view_order'),
     url(r'^interfact/labmgmt/view_sample/$', 'app.views.view_sample', name='view_sample'),
     url(r'^interfact/labmgmt/view_project/$', 'app.views.view_project', name='view_project'),
+    url(r'^interfact/labmgmt/receive_order/$', 'app.views.receive_order', name='receive_order'),
+    url(r'^interfact/labmgmt/add_pool/$', 'app.views.add_pool', name='add_pool'),
+    url(r'^interfact/labmgmt/update_status/$', 'app.views.update_status', name='update_status'),
     #(r'^accounts/', include('registration.backends.simple.urls')), #TODO email auth
 
     # Uncomment the admin/doc line below to enable admin documentation:

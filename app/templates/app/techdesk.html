@@ -11,6 +11,13 @@
 <body>
     {% block body_block %}
         <h1>Dashboard:</h1>
+        <a href="{% url 'receive_order' %}">Receive Order</a><br>
+        <a href="{% url 'add_pool' %}">Add Samples to a Pool</a><br>
+        <a href="{% url 'update_status' %}">Update Sample Status</a><br>
+        <a href="{% url 'list_orders' %}">List Orders</a><br>
+        <a href="{% url 'list_samples' %}">List Samples</a><br>
+        <a href="{% url 'list_projects' %}">List Projects</a><br>
+        <a href="{% url 'list_pools' %}">List Pools</a>
     {% endblock %}
 </body>
 </html>
