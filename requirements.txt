@@ -1,3 +1,4 @@
+--find-links wheelhouse
+mysql-python
 django<2
 django-bootstrap3
-mysql-python
