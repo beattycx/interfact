@@ -7,8 +7,9 @@
 <body>
     {% block body_block %}
         <p>
-        {% for item in query_results %}
-            <p>{{ item }}</p>
+        {{ projectformset.management_form }}
+        {% for form in projectformset %}
+            <p>{{ form }}</p>
         {% endfor %}
         </p>
     {% endblock %}

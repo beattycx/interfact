@@ -11,8 +11,8 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import modelformset_factory
 from django.forms import ModelForm
+from django.forms.models import model_to_dict
 from forms import *
-from utils import yield_to_template
 
 def home(request):
     """Renders the home page."""
@@ -196,40 +196,46 @@ def techdesk(request):
     return render(request, 'app/techdesk.html')
 
 def view_order(request):
-    query_results = Order.objects.filter() #something from session
+    def show(request, object_id):
+        order = OrderForm(data=model_to_dict(Order.objects.get(pk=object_id)))
+        return render_to_response('app/list_orders.html', {'order': order})
+    query_results = Order.objects.filter()
     return render(request, 'app/view_order.html', {'query_results': query_results})
 
 def view_sample(request):
-    query_results = Sample.objects.filter() #something from session
+    def show(request, object_id):
+        sample = SampleForm(data=model_to_dict(Order.objects.get(pk=object_id)))
+        return render_to_response('app/list_orders.html', {'sample': sample})
+    query_results = Sample.objects.filter()
     return render(request, 'app/view_sample.html', {'query_results': query_results})
 
 def view_project(request):
-    query_results = Project.objects.filter() #something from session
+    def show(request, object_id):
+        project = ProjectForm(data=model_to_dict(Order.objects.get(pk=object_id)))
+        return render_to_response('app/list_orders.html', {'order': order})
+    query_results = Project.objects.filter()
     return render(request, 'app/view_project.html', {'query_results': query_results})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_orders(request):
     query_results = Order.objects.all()
-    b=Order.objects.get(pk=1)
-    bf=OrderForm(instance=b)
-    data=yield_to_template(form_instance=bf, model_object=b,
-                        exclude=('number_of_comments', 'number_of_likes'),
-                        append=('user',))
-
-    return render_to_response('my-template.html',
-                          RequestContext(request,
-                                         {'data':data,}))
-    #TODO render list using formset with default vals and button to view associated object
-    return render(request, 'app/list_orders.html', {'query_results': query_results})
+    num = len(query_results)
+    OrderFormSetFactory = modelformset_factory(Order, form=OrderForm, exclude=(), max_num=num)
+    orderformset = OrderFormSetFactory()
+    return render(request, 'app/list_orders.html', {'orderformset': orderformset})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_samples(request):
     query_results = Sample.objects.all()
-    #TODO render list using formset with default vals and button to view associated object
-    return render(request, 'app/list_samples.html', {'query_results': query_results})
+    num = len(query_results)
+    SampleFormSetFactory = modelformset_factory(Sample, form=ModelForm, fields=('sampleID', 'name', 'laboratory', 'organism'), max_num=num)
+    sampleformset = SampleFormSetFactory()
+    return render(request, 'app/list_samples.html', {'sampleformset': sampleformset})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_projects(request):
     query_results = Project.objects.all()
-    #TODO render list using formset with default vals and button to view associated object
-    return render(request, 'app/list_projects.html', {'query_results': query_results})
+    num = len(query_results)
+    ProjectFormSetFactory = modelformset_factory(Project, form=ProjectForm, exclude=(), max_num=num)
+    projectformset = ProjectFormSetFactory()
+    return render(request, 'app/list_projects.html', {'projectformset': projectformset})
