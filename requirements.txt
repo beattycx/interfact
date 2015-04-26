@@ -1,6 +1,5 @@
 --find-links
 --no-index
 mysql-python
-MySQL_python
 django<2
 django-bootstrap3
