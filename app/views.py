@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import modelformset_factory
 from django.forms import ModelForm
 from forms import *
-from utils import build_pretty_data_view
+from utils import yield_to_template
 
 def home(request):
     """Renders the home page."""
