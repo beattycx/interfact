@@ -1,6 +1,6 @@
---find-links=wheelhouse
+--find-links
 --no-index
-MySQL_python-1.2.5-cp27-none-win32
 mysql-python
+MySQL_python
 django<2
 django-bootstrap3
