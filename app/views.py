@@ -118,12 +118,13 @@ def order(request):
     if request.method == 'POST':
         number_of_samples=int(request.POST.get('number_of_samples'))
         #Add this number of samples or sequencing run object to session?
-        request.session['number_of_samples'] = number_of_samples
         form = OrderForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             o = Order(name=cd['name'], description=cd['description'], number_of_samples=cd['number_of_samples'])
             o.save()
+            request.session['order'] = o.pk
+            request.session['number_of_samples'] = number_of_samples
             return HttpResponseRedirect('/interfact/labmgmt/order/sample_details/')
     else:
         form = OrderForm()
@@ -131,13 +132,17 @@ def order(request):
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def sample_details(request):
-    SampleFormSetFactory = modelformset_factory(Sample, form=ModelForm, fields=('sampleID', 'name', 'laboratory', 'organism'), extra=request.session['number_of_samples'])
+    SampleFormSetFactory = modelformset_factory(Sample, form=ModelForm, fields=('sampleID', 'name', 'laboratory', 'organism', 'order'),
+                                                extra=request.session.get('number_of_samples'))
     if request.method == 'POST':
         sampleformset=SampleFormSetFactory(request.POST, queryset=Sample.objects.none())
         if sampleformset.is_valid():
             for sampleform in sampleformset:
                 cd = sampleform.cleaned_data
-                s = Sample(sampleID=cd['sampleID'], name=cd['name'], laboratory=cd['laboratory'], organism=cd['organism'])
+                orderkey = request.session['order']
+                order=Order.objects.get(pk=orderkey)
+                s = Sample(sampleID=cd['sampleID'], name=cd['name'], laboratory=cd['laboratory'], organism=cd['organism'],
+                           order=order)
                 s.save()
             return HttpResponseRedirect('/interfact/labmgmt/')
     else:
@@ -196,28 +201,24 @@ def techdesk(request):
     return render(request, 'app/techdesk.html')
 
 def view_order(request):
-    def show(request, object_id):
-        order = OrderForm(data=model_to_dict(Order.objects.get(pk=object_id)))
-        return render_to_response('app/list_orders.html', {'order': order})
+    order_detail = request.session['order']
     query_results = Order.objects.filter()
     return render(request, 'app/view_order.html', {'query_results': query_results})
 
 def view_sample(request):
-    def show(request, object_id):
-        sample = SampleForm(data=model_to_dict(Order.objects.get(pk=object_id)))
-        return render_to_response('app/list_orders.html', {'sample': sample})
+    sample_detail = request.session['sample']
     query_results = Sample.objects.filter()
     return render(request, 'app/view_sample.html', {'query_results': query_results})
 
 def view_project(request):
-    def show(request, object_id):
-        project = ProjectForm(data=model_to_dict(Order.objects.get(pk=object_id)))
-        return render_to_response('app/list_orders.html', {'order': order})
+    project_detail = request.session['project']
     query_results = Project.objects.filter()
     return render(request, 'app/view_project.html', {'query_results': query_results})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_orders(request):
+    #TODO show orders with their samples ?via related_name?
+    #TODO have each record link to detailed view
     query_results = Order.objects.all()
     num = len(query_results)
     OrderFormSetFactory = modelformset_factory(Order, form=OrderForm, exclude=(), max_num=num)
@@ -226,14 +227,18 @@ def list_orders(request):
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_samples(request):
+    #TODO display only samples associated with current user
+    #TODO have each record link to detailed view
     query_results = Sample.objects.all()
     num = len(query_results)
-    SampleFormSetFactory = modelformset_factory(Sample, form=ModelForm, fields=('sampleID', 'name', 'laboratory', 'organism'), max_num=num)
+    SampleFormSetFactory = modelformset_factory(Sample, form=ModelForm, fields=('sampleID', 'name', 'laboratory', 'organism', 'order'), max_num=num)
     sampleformset = SampleFormSetFactory()
     return render(request, 'app/list_samples.html', {'sampleformset': sampleformset})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_projects(request):
+    #TODO handle issues with Form receiving request so current users projects will display
+    #TODO have each record link to detailed view
     query_results = Project.objects.all()
     num = len(query_results)
     ProjectFormSetFactory = modelformset_factory(Project, form=ProjectForm, exclude=(), max_num=num)

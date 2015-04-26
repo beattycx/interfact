@@ -83,7 +83,7 @@ class OrganismForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        exclude = ('samples',)
+        exclude = ()
 
 class PrincipalInvestigatorForm(forms.ModelForm):
     class Meta:

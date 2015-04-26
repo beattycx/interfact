@@ -51,10 +51,19 @@ class Organism(models.Model):
     def __unicode__(self):
         return str(self.linnaean)+' '+str(self.strain)
 
+class Order(models.Model):
+    name=models.CharField(max_length=254)
+    description=models.CharField(max_length=254)
+    number_of_samples=models.IntegerField()
+
+    def __unicode__(self):
+        return str(self.name)
+
 class Sample(models.Model):
     """A single sample's information"""
     sampleID = models.CharField(max_length=254)
     name = models.CharField(max_length=254)
+    order = models.ForeignKey(Order, related_name='samples')
     ordered = models.DateTimeField('date created', default=datetime.now)
     received = models.DateTimeField(null=True, blank=True)
     laboratory = models.ForeignKey(Laboratory)
@@ -75,15 +84,6 @@ class Project(models.Model):
     description = models.TextField(null=True, blank=True)
     laboratory = models.ForeignKey(Laboratory)
     samples = models.ManyToManyField(Sample, blank=True)
-
-    def __unicode__(self):
-        return str(self.name)
-
-class Order(models.Model):
-    name=models.CharField(max_length=254)
-    description=models.CharField(max_length=254)
-    number_of_samples=models.IntegerField()
-    samples=models.ManyToManyField(Sample)
 
     def __unicode__(self):
         return str(self.name)
