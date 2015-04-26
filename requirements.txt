@@ -1,4 +1,4 @@
---find-links wheelhouse
+--find-links=wheelhouse
 --no-index
 mysql-python
 django<2
