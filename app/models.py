@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class PrincipalInvestigator(models.Model):
-    user_account = models.ForeignKey(User)
+    user_account = models.ForeignKey(User, db_index=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=50)
@@ -21,7 +21,7 @@ class PrincipalInvestigator(models.Model):
 class Laboratory(models.Model):
     """This models a Laboratory from which orders are received """
     name = models.CharField(max_length=254)
-    principal_investigator = models.ForeignKey(PrincipalInvestigator)
+    principal_investigator = models.ForeignKey(PrincipalInvestigator, db_index=True)
 
     def __unicode__(self):
         return str(self.name)
@@ -63,16 +63,16 @@ class Sample(models.Model):
     """A single sample's information"""
     sampleID = models.CharField(max_length=254)
     name = models.CharField(max_length=254)
-    order = models.ForeignKey(Order, related_name='samples')
+    order = models.ForeignKey(Order, db_index=True, related_name='samples')
     ordered = models.DateTimeField('date created', default=datetime.now)
     received = models.DateTimeField(null=True, blank=True)
-    laboratory = models.ForeignKey(Laboratory)
-    protocolID = models.ForeignKey(Protocol, null=True, blank=True)
+    laboratory = models.ForeignKey(Laboratory, db_index=True)
+    protocolID = models.ForeignKey(Protocol, db_index=True, null=True, blank=True)
     region = models.IntegerField(null=True, blank=True)
     concentration_of_DNA = models.FloatField(null=True, blank=True)
     bead_count = models.IntegerField(null=True, blank=True)
     enrichment_percentage = models.IntegerField(null=True, blank=True)
-    organism = models.ForeignKey(Organism)
+    organism = models.ForeignKey(Organism, db_index=True)
 
     def __unicode__(self):
         return str(self.sampleID+'|'+str(self.name)+'|'+str(self.organism))
@@ -82,7 +82,7 @@ class Project(models.Model):
     projectID = models.CharField(max_length=254)
     name = models.CharField(max_length=254)
     description = models.TextField(null=True, blank=True)
-    laboratory = models.ForeignKey(Laboratory)
+    laboratory = models.ForeignKey(Laboratory, db_index=True)
     samples = models.ManyToManyField(Sample, blank=True)
 
     def __unicode__(self):
@@ -95,8 +95,8 @@ class SampleStatus(models.Model):
 class SampleTracking(models.Model):
     """Mutable record tracks sample workflow    """
     sampleID = models.OneToOneField(Sample)
-    samplestatus = models.ForeignKey(SampleStatus)
-    technician = models.ForeignKey(Technician)
+    samplestatus = models.ForeignKey(SampleStatus, db_index=True)
+    technician = models.ForeignKey(Technician, db_index=True)
     timestamp = models.DateTimeField('date created', default=datetime.now)
     comment = models.CharField(max_length=254, null=True, blank=True)
 
@@ -106,11 +106,11 @@ class SequencingRun(models.Model):
     description = models.CharField(max_length=254)
     comment = models.CharField(max_length=254, null=True, blank=True)
     date = models.DateTimeField('date created', default=datetime.now)
-    technician = models.ForeignKey(Technician, null=True, blank=True)
+    technician = models.ForeignKey(Technician, db_index=True, null=True, blank=True)
     platesize = models.PositiveSmallIntegerField(null=True, blank=True)
     number_of_samples = models.IntegerField()
     samples = models.ManyToManyField(Sample, blank=True)
-    protocol = models.ForeignKey(Protocol, null=True, blank=True)
+    protocol = models.ForeignKey(Protocol, db_index=True, null=True, blank=True)
     basecallermetricspath = models.CharField(max_length=254, null=True, blank=True)
     qualityfiltermetricspath = models.CharField(max_length=254, null=True, blank=True)
     qualitygraphpath = models.CharField(max_length=254, null=True, blank=True)

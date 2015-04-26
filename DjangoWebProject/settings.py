@@ -21,13 +21,14 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': path.join(PROJECT_ROOT, 'db.sqlite3'),
+        'NAME': 'interfactdb',
         'USER': 'b3c7b330dc0a07',
         'PASSWORD': '0f388f36',
         'HOST': 'us-cdbr-azure-east-b.cloudapp.net',
         'PORT': '3306',
     }
 }
+#path.join(PROJECT_ROOT, 'interfactdb')
 
 LOGIN_URL = '/login'
 
