@@ -66,7 +66,7 @@ class Sample(models.Model):
     organism = models.ForeignKey(Organism)
 
     def __unicode__(self):
-        return str(self.sampleID+'|'+str(self.name)+'|'+str(self.organism)+'|')
+        return str(self.sampleID+'|'+str(self.name)+'|'+str(self.organism))
 
 class Project(models.Model):
     """This models a particular Project under which orders are organized """
@@ -76,11 +76,17 @@ class Project(models.Model):
     laboratory = models.ForeignKey(Laboratory)
     samples = models.ManyToManyField(Sample, blank=True)
 
+    def __unicode__(self):
+        return str(self.name)
+
 class Order(models.Model):
     name=models.CharField(max_length=254)
     description=models.CharField(max_length=254)
     number_of_samples=models.IntegerField()
     samples=models.ManyToManyField(Sample)
+
+    def __unicode__(self):
+        return str(self.name)
 
 class SampleStatus(models.Model):
     _choices={'1': 'Received', '2': 'Sequencing', '3': 'Finished'}

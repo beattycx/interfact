@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms.models import modelformset_factory
 from django.forms import ModelForm
 from forms import *
+from utils import build_pretty_data_view
 
 def home(request):
     """Renders the home page."""
@@ -194,14 +195,32 @@ def techdesk(request):
         pass
     return render(request, 'app/techdesk.html')
 
+def view_order(request):
+    query_results = Order.objects.filter() #something from session
+    return render(request, 'app/view_order.html', {'query_results': query_results})
+
+def view_sample(request):
+    query_results = Sample.objects.filter() #something from session
+    return render(request, 'app/view_sample.html', {'query_results': query_results})
+
+def view_project(request):
+    query_results = Project.objects.filter() #something from session
+    return render(request, 'app/view_project.html', {'query_results': query_results})
+
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_orders(request):
-    return render(request, 'app/list_orders.html')
+    query_results = Order.objects.all()
+    #TODO render list using formset with default vals and button to view associated object
+    return render(request, 'app/list_orders.html', {'query_results': query_results})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_samples(request):
-    return render(request, 'app/list_samples.html')
+    query_results = Sample.objects.all()
+    #TODO render list using formset with default vals and button to view associated object
+    return render(request, 'app/list_samples.html', {'query_results': query_results})
 
 @user_passes_test(lambda u: u.groups.filter(name='Principal Investigator'), login_url='/login')
 def list_projects(request):
-    return render(request, 'app/list_projects.html')
+    query_results = Project.objects.all()
+    #TODO render list using formset with default vals and button to view associated object
+    return render(request, 'app/list_projects.html', {'query_results': query_results})

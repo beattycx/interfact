@@ -5,6 +5,14 @@
     <title></title>
 </head>
 <body>
-
+    {% block body_block %}
+        <p>
+        {% for item in query_results %}
+        <tr>
+            {{ item }}
+        </tr>
+        {% endfor %}
+        </p>
+    {% endblock %}
 </body>
 </html>
